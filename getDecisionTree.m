@@ -6,14 +6,14 @@ function [ decision_tree ] = getDecisionTree(emotion)
     
     load('forstudents/cleandata_students.mat');
     binary_targets = get_bin_tars(y, emotion);
-    decision_tree = decisionTreeLearning(x, attributes, binary_targets); 
+    decision_tree = decisionTreeLearning(x, y, binary_targets); 
 end
 
 function bin_tars = get_bin_tars(y, emotion)
 % creates the binary targets vector for the given emotion number from the 
 % classifications given in y.
 
-    bin_tars = zeros([length(y) 1])
+    bin_tars = zeros([length(y) 1]);
     for i = 1:length(y)
         if y(i)==emotion
             bin_tars(i)=1;
