@@ -18,3 +18,13 @@ end
 
 function [ tree ] = getTree()
 % returns an initialise tree struct where the tree op = attr
+
+
+
+function allAreSame = allBinaryTargetsAreSame(binary_targets)
+% returns True iff all binary_targets have the same value
+% used as part of decisionTreeLearning algorithm
+% TODO: Fails when binary_targets is an empty vector, not sure if we 
+%       have to handle this case though
+    allAreSame = all(binary_targets == binary_targets(1))
+end
