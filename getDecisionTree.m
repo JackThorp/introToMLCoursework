@@ -4,21 +4,12 @@ function [ decision_tree ] = getDecisionTree(emotion_number)
 %   clean data set and then calls the decisionTreeLearning function to
 %   generate the decision tree.
 
-% load('/homes/jt1712/3rdYEar/ML/forstudents/cleandata_students.mat')
+clean_set = load('forstudents/cleandata_students.mat');
 
-% decision_tree = decisionTreeLearning(examples, attributes, binary_targets); 
-    newy = [1;2;3;4;5;6;1]
-    decision_tree = get_bin_tars(newy,1)
+binary_targets = clean_set.y;
 
+for i=1:length(binary_targets),
+    binary_targets(i) = (binary_targets(i) == emotion_number);
 end
 
-function bin_tars = get_bin_tars(y, emotion)
-   
-    bin_tars = zeros([length(y) 1])
-% iterrate through the array
-    for i = 1:length(y)
-        if y(i)==emotion
-            bin_tars(i)=1;
-        end
-    end
-end
+decision_tree = decisionTreeLearning(clean_set.x, [], binary_targets);
