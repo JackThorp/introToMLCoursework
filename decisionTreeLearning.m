@@ -47,8 +47,6 @@ function [ decision_tree ] = decisionTreeLearning(examples, attributes, binary_t
 end
 
 
-
-
 function [ reduced_examples, reduced_binary_targets ] = getExamplesWithAttributeOfValue(examples, attribute, value);
     % TODO: implement
     reduced_examples = 0;
@@ -56,32 +54,49 @@ function [ reduced_examples, reduced_binary_targets ] = getExamplesWithAttribute
 end
 
 
-
-
-
 function [ best_attribute ] = chooseBestDecisionAttribute(examples, attributes, binary_targets)
-    % TODO: implement
+    % Returns the attribute from 'attributes' which splits the examples
+    % resulting in the greatest information gain.
     best_attribute = 0;
 end
 
+function [ gain ] = gain(examples, attribute)
+    % Returns the information gain of an attribute
+    % TODO: this function, it's tricky with matlab. I can't work out nested
+    % cells / arrays :S
+    attr_values = 2;
+    split_examples = cell(attr_values, 1);
+    for i=1:length(examples)
+        split_examples{examples(i, attribute)};
+    end
+end
 
+function [ entropy ] = entropy(examples, attribute)
+    % Returns the entropy of given attribute.
+    attr_values = 2;
+    value_counts = zeros([attr_values 1]);
+    for i = 1:length(examples)
+        val = examples(i, attribute);
+        value_counts(val) = value_counts(val) + 1;
+    end
+    proportions = value_counts / length(examples);
+    entropy = sum(arrayfun(@(p) purity(p), proportions));
+end
 
-
+function [ purity ] = purity(value)
+% Would have used anonymous function in entopy but -0*log2(0) is NaN in
+% matlab?
+    if (in ==0)
+        purity = 0;
+    else
+        purity = -in*log2(in);
+    end
+end
 
 function [ M ]  = majorityValue(binary_targets)
     % Returns the mode of the binary-targets
     M = mode(binary_targets); 
 end
-
-
-
-
-
-function [ tree ] = getTree()
-    % returns an initialise tree struct where the tree op = attr
-end
-
-
 
 
 function [ allAreSame ] = allBinaryTargetsAreSame(binary_targets)
