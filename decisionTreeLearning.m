@@ -60,26 +60,29 @@ function [ best_attribute ] = chooseBestDecisionAttribute(examples, attributes, 
     best_attribute = 0;
 end
 
-function [ gain ] = gain(examples, attribute)
+function [ gain ] = gain(examples, binary_targets, attribute)
     % Returns the information gain of an attribute
-    % TODO: this function, it's tricky with matlab. I can't work out nested
-    % cells / arrays :S
     attr_values = 2;
-    split_examples = cell(attr_values, 1);
+    tar_splits = cell(attr_values, 1);
     for i=1:length(examples)
-        split_examples{examples(i, attribute)};
+        attr_val = examples(i, attribute)+1; % +1 for zero indexing...
+        tar_splits{attr_val} = [tar_splits{attr_val};binary_targets(i)];
     end
+    
+    gain = entropy(binary_targets);
+    gain = gain - sum(arrayfun(@(c) (length(c)/length(examples))*entropy(c), tar_splits));
 end
 
-function [ entropy ] = entropy(examples, attribute)
-    % Returns the entropy of given attribute.
-    attr_values = 2;
-    value_counts = zeros([attr_values 1]);
-    for i = 1:length(examples)
-        val = examples(i, attribute);
-        value_counts(val) = value_counts(val) + 1;
+function [ entropy ] = entropy(binary_targets)
+    % Returns the entropy of set by inspecting binary_targets.
+    
+    target_values = 2; % positive or negative
+    target_counts = zeros([target_values 1]);
+    for i = 1:length(binary_targets)
+        val = binary_targets(i)+1; %for non-zero indexing.
+        target_counts(val) = target_counts(val) + 1;
     end
-    proportions = value_counts / length(examples);
+    proportions = target_counts / length(binary_targets);
     entropy = sum(arrayfun(@(p) purity(p), proportions));
 end
 
