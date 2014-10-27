@@ -9,9 +9,29 @@ if (allSame(binary_targets) | isempty(attributes))
 else
     best = chooseBestDecisionAttribute(examples, attributes, binary_targets);
     tree.op = best;
+    tree.kids = {getSubtree(0, best), getSubtree(1, best)}; 
     decision_tree = tree;
 end
-    
+
+    function [subtree] = getSubtree(u, best)
+    % Returns the subtree for the best attribute valued u.
+    examples_i = [];
+    targets_i = [];
+    for i=1:length(binary_targets),
+        if (examples(i, best) == u)
+            examples_i = [examples_i; examples(i,:)];
+            targets_i(end+1) = binary_targets(i);
+        end
+    end
+    if (isempty(examples_i))
+        subtree = leafNode(majorityValue(binary_targets));
+    else
+        new_attrib = attributes;
+        new_attrib(best) = [];
+        subtree = decisionTreeLearning(examples_i, new_attrib, targets_i);
+    end
+    end
+
 end
 
 function [best] = chooseBestDecisionAttribute(examples, attributes, binary_targets)
@@ -25,7 +45,7 @@ for i=1:length(attributes),
     gains(i) = I(p, n) - remainder(attributes(i));
 end
 [maxGain, maxGainIndex] = max(gains); % [value, index]
-best = attributes(maxGainIndex);
+best = maxGainIndex;
 
     function [I] = I(p, n);
     a = p / (p + n);
@@ -35,19 +55,19 @@ best = attributes(maxGainIndex);
 
     function[rem] = remainder(i)
     % returns remainder for the attribute numbered i
-    p = [0, 0]; % p0, p1
-    n = [0, 0]; % n0, n1
+    ps = [0, 0]; % p0, p1
+    ns = [0, 0]; % n0, n1
     for j=1:length(binary_targets),
         value = examples(j, i);
-        valpair = [value, 1 - value0];
+        valpair = [value, 1 - value];
         if (binary_targets(j))
-            p = p + valpair;
+            ps = ps + valpair;
         else
-            n = n + valpair;
+            ns = ns + valpair;
         end
     end
     for k=1:2,
-        r(k) =  ((p(k) + n(k))/(p + n)) * I(p(k), n(k));
+        r(k) =  ((ps(k) + ns(k))/(p + n)) * I(ps(k), ns(k));
     end
     rem = r(1) + r(2);
     end

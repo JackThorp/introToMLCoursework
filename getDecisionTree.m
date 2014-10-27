@@ -1,3 +1,4 @@
+
 function [ decision_tree ] = getDecisionTree(emotion_number)
 % Returns a decision tree for the given emotion number.
 %   The function generates the binary target for the emotion from the
@@ -12,4 +13,4 @@ for i=1:length(binary_targets),
     binary_targets(i) = (binary_targets(i) == emotion_number);
 end
 
-decision_tree = decisionTreeLearning(clean_set.x, [], binary_targets);
+decision_tree = decisionTreeLearning(clean_set.x, [1:size(clean_set.x, 2)], binary_targets);
