@@ -6,8 +6,8 @@ function [ decision_tree ] = getDecisionTree(emotion)
     
     load('forstudents/cleandata_students.mat');
     binary_targets = get_bin_tars(y, emotion);
-    % TODO: define attributes, it is not the same as y
-    % TODO: decision_tree = decisionTreeLearning(x, y, binary_targets); 
+    attributes = (1:length(x(1,:)));
+    decision_tree = decisionTreeLearning(x, attributes, binary_targets); 
 end
 
 function bin_tars = get_bin_tars(y, emotion)

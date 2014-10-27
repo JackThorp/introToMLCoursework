@@ -10,8 +10,9 @@ function [ decision_tree ] = decisionTreeLearning(examples, attributes, binary_t
         return
     end 
 
-    % find the best_attribute 
+    % find the best_attribute then remove it from list
     best_attribute = chooseBestDecisionAttribute(examples, attributes, binary_targets);
+    attributes = attributes(attributes~=3);
     
     % decision tree = new tree with root best_attribute
     decision_tree.op = best_attribute;
@@ -39,26 +40,33 @@ function [ decision_tree ] = decisionTreeLearning(examples, attributes, binary_t
 end
 
 
-function [ reduced_examples, reduced_binary_targets ] = getExamplesWithAttributeOfValue(examples, binary_targets, attribute, value);
-    reduced_examples = [];
-    reduced_binary_targets = [];
+function [ reduced_examples, reduced_binary_targets ] = getExamplesWithAttributeOfValue(examples, binary_targets, attribute, value)
+    % Pre-allocate arrays
+    reduced_examples = zeros(length(examples(:,1)), length(examples(1,:)));
+    reduced_binary_targets = zeros(1, length(binary_targets));
     
-    for i = 1:length(examples)
+    next_index = 1;
+    for i = 1:length(examples(:,1))
         % Get next example, e.g. row from examples with a value for each
         % attribute
         example = examples(i,:);
-        
         % Get the value of desired attribute
         value_actual = example(attribute);
         
-        if (value_actual == value_wanted)
+        if (value_actual == value)
             % Add this example to the vector of reduced examples
-            index = length(reduced_examples) + 1;
             % TODO: fix the performance issue by prealocating the array
-            reduced_examples(index,:) = example;
-            reduced_binary_targets(index,:) = binary_targets(i);
+            reduced_examples(next_index,:) = example;
+            reduced_binary_targets(next_index) = binary_targets(i); 
+            next_index = next_index + 1;
         end    
-    end    
+    end   
+    
+    % Crop array to delete space that wasn't used
+    while (length(reduced_binary_targets) >= next_index)
+        reduced_examples(next_index,:) = [];
+        reduced_binary_targets(next_index) = [];
+    end
 end
 
 
@@ -86,7 +94,11 @@ function [ gain ] = gain(examples, attribute, bin_targs)
     end
    
     gain = entropy(bin_targs);
-    gain = gain - sum(arrayfun(@(c) (length(c)/length(examples))*entropy(c), splits));
+    gain = gain - remainder(examples, splits);
+end
+
+function [ remainder_entropy ] = remainder(examples, splits)
+    remainder_entropy = sum(cellfun(@(c) (length(c)/length(examples))*entropy(c), splits));
 end
 
 function [ entropy ] = entropy(bin_targs)
@@ -94,16 +106,12 @@ function [ entropy ] = entropy(bin_targs)
     pos = sum(bin_targs == 1) / length(bin_targs);
     neg = sum(bin_targs == 0) / length(bin_targs);
     
-    entropy = sum(arrayfun(@(p) purity(p), [pos neg]));
-    
-    function [purity] = purity(v)
-        if (v ==0)
-            purity = 0;
-        else
-            purity = -v*log2(v);
-        end
+    if (pos==0 || neg==0)
+        entropy=0;
+        return
     end
-
+    
+    entropy = sum(arrayfun(@(p) -p*log2(p), [pos neg]));
 end
 
 function [ allAreSame ] = allBinaryTargetsAreSame(binary_targets)
