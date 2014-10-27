@@ -3,7 +3,7 @@ function [ decision_tree ] = decisionTreeLearning(examples, attributes, binary_t
 % function to return the decision tree for a specific target classification 
 % e.g anger. The binary_targets vector should be appropriatley formatted
 % for the desired decision tree.
-  
+
     if(allBinaryTargetsAreSame(binary_targets))
         % return leaf node with this value
         % TODO: might want to change this magic 1 for something else
@@ -18,7 +18,7 @@ function [ decision_tree ] = decisionTreeLearning(examples, attributes, binary_t
     end
 
     % find the best_attribute 
-    best_attribute = chooseBestDecisionAttribute(examples, attributes, binary_targets);
+    best_attribute = chooseBestDecisionAttribute(examples, attributes, binary_targets)
     
     % decision tree = new tree with root best_attribute
     decision_tree.op = best_attribute;
@@ -47,70 +47,103 @@ function [ decision_tree ] = decisionTreeLearning(examples, attributes, binary_t
 end
 
 
-function [ reduced_examples, reduced_binary_targets ] = getExamplesWithAttributeOfValue(examples, binary_targets, attribute, value);
-    reduced_examples = [];
-    reduced_binary_targets = [];
+function [ reduced_examples, reduced_binary_targets ] = getExamplesWithAttributeOfValue(examples, binary_targets, attribute, value)
+    % Pre-allocate arrays
+    reduced_examples = zeros(length(examples(:,1)), length(examples(1,:)));
+    reduced_binary_targets = zeros(1, length(binary_targets));
     
-    for i = 1:length(examples)
+    next_index = 1;
+    for i = 1:length(examples(:,1))
         % Get next example, e.g. row from examples with a value for each
         % attribute
         example = examples(i,:);
-        
         % Get the value of desired attribute
         value_actual = example(attribute);
         
-        if (value_actual == value_wanted)
+        if (value_actual == value)
             % Add this example to the vector of reduced examples
-            index = length(reduced_examples) + 1;
             % TODO: fix the performance issue by prealocating the array
-            reduced_examples(index,:) = example;
-            reduced_binary_targets(index,:) = binary_targets(i);
+            reduced_examples(next_index,:) = example;
+            reduced_binary_targets(next_index) = binary_targets(i); 
+            next_index = next_index + 1;
         end    
-    end    
+    end   
+    
+    % Crop array to delete space that wasn't used
+    while (length(reduced_binary_targets) >= next_index)
+        reduced_examples(next_index,:) = [];
+        reduced_binary_targets(next_index) = [];
+    end
 end
 
 
 function [ best_attribute ] = chooseBestDecisionAttribute(examples, attributes, binary_targets)
     % Returns the attribute from 'attributes' which splits the examples
     % resulting in the greatest information gain.
+    best_gain = 0;
     best_attribute = 0;
+    
+    for i = 1:length(attributes)
+       attribute = attributes(i);
+       attribute_gain = gain(examples, binary_targets, attribute);
+       
+       if(attribute_gain > best_gain)
+           best_gain = attribute_gain;
+           best_attribute = attribute;
+       end
+    end   
+    
 end
 
 function [ gain ] = gain(examples, binary_targets, attribute)
     % Returns the information gain of an attribute
-    attr_values = 2;
-    tar_splits = cell(attr_values, 1);
-    for i=1:length(examples)
-        attr_val = examples(i, attribute)+1; % +1 for zero indexing...
-        tar_splits{attr_val} = [tar_splits{attr_val};binary_targets(i)];
-    end
+    p = sum(binary_targets == 1);
+    n = sum(binary_targets == 0);
     
-    gain = entropy(binary_targets);
-    gain = gain - sum(arrayfun(@(c) (length(c)/length(examples))*entropy(c), tar_splits));
+    gain = entropy(p,n) - remainder(examples, binary_targets, attribute);
 end
 
-function [ entropy ] = entropy(binary_targets)
-    % Returns the entropy of set by inspecting binary_targets.
-    
-    target_values = 2; % positive or negative
-    target_counts = zeros([target_values 1]);
-    for i = 1:length(binary_targets)
-        val = binary_targets(i)+1; %for non-zero indexing.
-        target_counts(val) = target_counts(val) + 1;
+
+
+function [ entropy ] = entropy(p, n)
+    % Calculates the entropy given the number of positive and negative
+    % examples
+    if (p == 0 || n == 0) 
+        entropy = 0;
+        return
     end
-    proportions = target_counts / length(binary_targets);
-    entropy = sum(arrayfun(@(p) purity(p), proportions));
+    
+    positive_ratio = p / (p + n);
+    negative_ratio = n / (p + n);
+    entropy = -positive_ratio*log2(positive_ratio) - negative_ratio * log2(negative_ratio);
+    
 end
 
-function [ purity ] = purity(value)
-% Would have used anonymous function in entopy but -0*log2(0) is NaN in
-% matlab?
-    if (in ==0)
-        purity = 0;
-    else
-        purity = -in*log2(in);
-    end
+
+function [ remainder_entropy ] = remainder(examples, binary_targets, attribute)
+    p = sum(binary_targets == 1);
+    n = sum(binary_targets == 0);
+
+    [~, positive_bin_tars] = getExamplesWithAttributeOfValue(examples, binary_targets, attribute, 1);
+    [~, negative_bin_tars] = getExamplesWithAttributeOfValue(examples, binary_targets, attribute, 0);
+    
+    p1 = sum(positive_bin_tars == 1);
+    n1 = sum(positive_bin_tars == 0);
+    
+    p0 = sum(negative_bin_tars == 1);
+    n0 = sum(negative_bin_tars == 0);
+    
+    positive_entropy = entropy(p1, n1);
+    negative_entropy = entropy(p0, n0);
+    
+    
+    remainder_entropy = ((p0+n0)/(p+n)) * negative_entropy + ((p1+n1)/(p+n)) * positive_entropy;
 end
+
+
+
+
+
 
 function [ M ]  = majorityValue(binary_targets)
     % Returns the mode of the binary-targets

@@ -3,14 +3,14 @@ function [ decision_tree ] = getDecisionTree(emotion)
 %   The function generates the binary target for the emotion from the
 %   clean data set and then calls the decisionTreeLearning function to
 %   generate the decision tree.
-    
     load('forstudents/cleandata_students.mat');
     binary_targets = get_bin_tars(y, emotion);
     % TODO: define attributes, it is not the same as y
-    % TODO: decision_tree = decisionTreeLearning(x, y, binary_targets); 
+    attributes = (1:length(x(1,:)));
+    decision_tree = decisionTreeLearning(x, attributes, binary_targets); 
 end
 
-function bin_tars = get_bin_tars(y, emotion)
+function [bin_tars] = get_bin_tars(y, emotion)
 % creates the binary targets vector for the given emotion number from the 
 % classifications given in y.
 
