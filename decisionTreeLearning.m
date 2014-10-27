@@ -28,7 +28,7 @@ function [ decision_tree ] = decisionTreeLearning(examples, attributes, binary_t
     
     for possible_value = 0:1
         % get elements of examples with best_attribute == possible_value and the corresponding binary_targets
-        [reduced_examples, reduced_binary_targets] = getExamplesWithAttributeOfValue(examples, best_attribute, possible_value);
+        [reduced_examples, reduced_binary_targets] = getExamplesWithAttributeOfValue(examples, binary_targets, best_attribute, possible_value);
        
         
         if (isempty(reduced_examples))
@@ -47,10 +47,26 @@ function [ decision_tree ] = decisionTreeLearning(examples, attributes, binary_t
 end
 
 
-function [ reduced_examples, reduced_binary_targets ] = getExamplesWithAttributeOfValue(examples, attribute, value);
-    % TODO: implement
-    reduced_examples = 0;
-    reduced_binary_targets = 0;
+function [ reduced_examples, reduced_binary_targets ] = getExamplesWithAttributeOfValue(examples, binary_targets, attribute, value);
+    reduced_examples = [];
+    reduced_binary_targets = [];
+    
+    for i = 1:length(examples)
+        % Get next example, e.g. row from examples with a value for each
+        % attribute
+        example = examples(i,:);
+        
+        % Get the value of desired attribute
+        value_actual = example(attribute);
+        
+        if (value_actual == value_wanted)
+            % Add this example to the vector of reduced examples
+            index = length(reduced_examples) + 1;
+            % TODO: fix the performance issue by prealocating the array
+            reduced_examples(index,:) = example;
+            reduced_binary_targets(index,:) = binary_targets(i);
+        end    
+    end    
 end
 
 
