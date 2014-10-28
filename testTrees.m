@@ -26,7 +26,7 @@ function [ classifications ] = classify(tree, data)
 
     classifications = zeros(length(data), 1);
     for j = 1:length(data)
-        classifications(j) = testExample(tree, data(i)); 
+        classifications(j) = testExample(tree, data(j)); 
     end
 end
 
