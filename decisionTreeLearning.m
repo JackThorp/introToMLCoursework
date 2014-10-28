@@ -4,36 +4,31 @@ function [ decision_tree ] = decisionTreeLearning(examples, attributes, binary_t
 % e.g anger. The binary_targets vector should be appropriatley formatted
 % for the desired decision tree.
 
-    if(allBinaryTargetsAreSame(binary_targets))
+    if(allBinaryTargetsAreSame(binary_targets) || isempty(attributes))
         % return leaf node with this value
-        % TODO: might want to change this magic 1 for something else
-        decision_tree.class = binary_targets(1);
+        decision_tree.kids = [];
+        decision_tree.op = [];
+        decision_tree.class = mode(binary_targets);
         return
     end 
-   
-    if(isempty(attributes))
-        % return leaf node with value = majorityValue(binary_targets)
-        decision_tree.class = majorityValue(binary_targets);
-        return
-    end
 
-    % find the best_attribute 
+    % find the best_attribute then remove it from list
     best_attribute = chooseBestDecisionAttribute(examples, attributes, binary_targets)
     
-    % decision tree = new tree with root best_attribute
+    % initialize tree
     decision_tree.op = best_attribute;
-    
-    % initialize kids to be 2x1 cell array
     decision_tree.kids = cell(2,1);
+    
+    attributes = attributes(attributes~=best_attribute);
     
     for possible_value = 0:1
         % get elements of examples with best_attribute == possible_value and the corresponding binary_targets
         [reduced_examples, reduced_binary_targets] = getExamplesWithAttributeOfValue(examples, binary_targets, best_attribute, possible_value);
-       
-        
+
         if (isempty(reduced_examples))
-            subtree.class = majorityValue(binary_targets);
-            
+            subtree.class = mode(binary_targets);
+            subtree.op = [];
+            subtree.kids = [];
         else 
             % recursively find subtree
             subtree = decisionTreeLearning(reduced_examples, attributes, reduced_binary_targets);
@@ -62,7 +57,6 @@ function [ reduced_examples, reduced_binary_targets ] = getExamplesWithAttribute
         
         if (value_actual == value)
             % Add this example to the vector of reduced examples
-            % TODO: fix the performance issue by prealocating the array
             reduced_examples(next_index,:) = example;
             reduced_binary_targets(next_index) = binary_targets(i); 
             next_index = next_index + 1;
@@ -77,84 +71,50 @@ function [ reduced_examples, reduced_binary_targets ] = getExamplesWithAttribute
 end
 
 
-function [ best_attribute ] = chooseBestDecisionAttribute(examples, attributes, binary_targets)
+function [ best_attribute ] = chooseBestDecisionAttribute(examples, attributes, bin_targs)
     % Returns the attribute from 'attributes' which splits the examples
     % resulting in the greatest information gain.
-    best_gain = 0;
-    best_attribute = 0;
     
-    for i = 1:length(attributes)
-       attribute = attributes(i);
-       attribute_gain = gain(examples, binary_targets, attribute);
-       
-       if(attribute_gain > best_gain)
-           best_gain = attribute_gain;
-           best_attribute = attribute;
-       end
-    end   
+    % map gain accross attributes and pick max.
+    gains = arrayfun(@(a) gain(examples, a, bin_targs), attributes);
+    [~, best_attribute_index] = max(gains);
+    best_attribute = attributes(best_attribute_index);
     
 end
 
-function [ gain ] = gain(examples, binary_targets, attribute)
-    % Returns the information gain of an attribute
-    p = sum(binary_targets == 1);
-    n = sum(binary_targets == 0);
-    
-    gain = entropy(p,n) - remainder(examples, binary_targets, attribute);
+function [ gain ] = gain(examples, attribute, bin_targs)
+    % generally attribute could take more than 2 values ...
+    attr_values = 2;
+   
+    % divide the examples up into splits depending on value for attribute
+    splits = cell(attr_values, 1);
+    for i=1:length(examples(:,1))
+        val = examples(i, attribute); 
+        splits{val+1} = [splits{val+1};bin_targs(i)]; % +1 for zero indexing...
+    end
+   
+    gain = entropy(bin_targs);
+    gain = gain - remainder(examples, splits);
 end
 
 
+function [ remainder_entropy ] = remainder(examples, splits)
+    remainder_entropy = sum(cellfun(@(c) (length(c)/length(examples))*entropy(c), splits));
+end
 
-function [ entropy ] = entropy(p, n)
-    % Calculates the entropy given the number of positive and negative
-    % examples
-    if (p == 0 || n == 0) 
-        entropy = 0;
+function [ entropy ] = entropy(bin_targs)
+    % Returns the entropy of set by inspecting binary_targets.
+    pos = sum(bin_targs == 1) / length(bin_targs);
+    neg = sum(bin_targs == 0) / length(bin_targs);
+    
+    if (pos==0 || neg==0)
+        entropy=0;
         return
     end
     
-    positive_ratio = p / (p + n);
-    negative_ratio = n / (p + n);
-    entropy = -positive_ratio*log2(positive_ratio) - negative_ratio * log2(negative_ratio);
-    
+    entropy = sum(arrayfun(@(p) -p*log2(p), [pos neg]));
 end
-
-
-function [ remainder_entropy ] = remainder(examples, binary_targets, attribute)
-    p = sum(binary_targets == 1);
-    n = sum(binary_targets == 0);
-
-    [~, positive_bin_tars] = getExamplesWithAttributeOfValue(examples, binary_targets, attribute, 1);
-    [~, negative_bin_tars] = getExamplesWithAttributeOfValue(examples, binary_targets, attribute, 0);
-    
-    p1 = sum(positive_bin_tars == 1);
-    n1 = sum(positive_bin_tars == 0);
-    
-    p0 = sum(negative_bin_tars == 1);
-    n0 = sum(negative_bin_tars == 0);
-    
-    positive_entropy = entropy(p1, n1);
-    negative_entropy = entropy(p0, n0);
-    
-    
-    remainder_entropy = ((p0+n0)/(p+n)) * negative_entropy + ((p1+n1)/(p+n)) * positive_entropy;
-end
-
-
-
-
-
-
-function [ M ]  = majorityValue(binary_targets)
-    % Returns the mode of the binary-targets
-    M = mode(binary_targets); 
-end
-
 
 function [ allAreSame ] = allBinaryTargetsAreSame(binary_targets)
-% returns True iff all binary_targets have the same value
-% used as part of decisionTreeLearning algorithm
-% TODO: Fails when binary_targets is an empty vector, not sure if we 
-%       have to handle this case though
     allAreSame = all(binary_targets == binary_targets(1));
 end
