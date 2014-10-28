@@ -13,7 +13,7 @@ function [ decision_tree ] = decisionTreeLearning(examples, attributes, binary_t
     end 
 
     % find the best_attribute then remove it from list
-    best_attribute = chooseBestDecisionAttribute(examples, attributes, binary_targets)
+    best_attribute = chooseBestDecisionAttribute(examples, attributes, binary_targets);
     
     % initialize tree
     decision_tree.op = best_attribute;
