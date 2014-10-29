@@ -4,13 +4,22 @@ function [ decision_tree ] = decisionTreeLearning(examples, attributes, binary_t
 % e.g anger. The binary_targets vector should be appropriatley formatted
 % for the desired decision tree.
 
-    if(allBinaryTargetsAreSame(binary_targets) || isempty(attributes))
+    if(allBinaryTargetsAreSame(binary_targets))
+        % return leaf node with this value
+        decision_tree.kids = [];
+        decision_tree.op = [];
+        decision_tree.class = binary_targets(1);
+        decision_tree.score = length(binary_targets);
+        return 
+    end
+    if(isempty(attributes))
         % return leaf node with this value
         decision_tree.kids = [];
         decision_tree.op = [];
         decision_tree.class = mode(binary_targets);
+        decision_tree.score = mean(binary_targets);
         return
-    end 
+    end
 
     % find the best_attribute then remove it from list
     best_attribute = chooseBestDecisionAttribute(examples, attributes, binary_targets);
@@ -29,6 +38,7 @@ function [ decision_tree ] = decisionTreeLearning(examples, attributes, binary_t
             subtree.class = mode(binary_targets);
             subtree.op = [];
             subtree.kids = [];
+            subtree.score = mean(binary_targets);
         else 
             % recursively find subtree
             subtree = decisionTreeLearning(reduced_examples, attributes, reduced_binary_targets);
