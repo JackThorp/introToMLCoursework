@@ -3,5 +3,9 @@ function F1 = measure_F1(  c_matrix, class )
 % and produce F1-measures 
 % F1 = 2 ( (precision*recall)/(precision+recall) )
 
+precision = measure_precision(c_matrix, class);
+recall = measure_recall(c_matrix, class);
+F1 = 2 *( (precision*recall)/(precision+recall) );
+
 end
 
