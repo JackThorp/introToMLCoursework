@@ -1,6 +1,6 @@
 function [ predictions ] = testTrees( T, x2 )
 % testTrees takes an array/cell of six trees T (one tree to classify each
-% emotion) and an array of example data. This function returns an array of 
+% emotion) and an array of validation data. This function returns an array of 
 % predicted emotion labels (1 to 6) for these examples.
 
     no_emotions = 6;

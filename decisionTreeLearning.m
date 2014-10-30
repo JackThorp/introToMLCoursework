@@ -28,27 +28,27 @@ function [ decision_tree ] = decisionTreeLearning(examples, attributes, binary_t
     decision_tree.op = best_attribute;
     decision_tree.kids = cell(2,1);
     
-    attributes = attributes(attributes~=best_attribute);
+%     attributes = attributes(attributes~=best_attribute);
     
-    for possible_value = 0:1
-        % get elements of examples with best_attribute == possible_value and the corresponding binary_targets
-        [reduced_examples, reduced_binary_targets] = getExamplesWithAttributeOfValue(examples, binary_targets, best_attribute, possible_value);
+     for possible_value = 0:1
+         % get elements of examples with best_attribute == possible_value and the corresponding binary_targets
+         [reduced_examples, reduced_binary_targets] = getExamplesWithAttributeOfValue(examples, binary_targets, best_attribute, possible_value);
 
-        if (isempty(reduced_examples))
-            subtree.class = mode(binary_targets);
-            subtree.op = [];
-            subtree.kids = [];
-            subtree.score = mean(binary_targets);
-        else 
-            % recursively find subtree
-            subtree = decisionTreeLearning(reduced_examples, attributes, reduced_binary_targets);
-        end
-        
-        % set subtree
-        % need the (+1) because cell arrays are 1-indexed
-        decision_tree.kids{possible_value + 1} = subtree;
-    end
-    
+        if (isempty(reduced_examples)||(length(binary_targets)==length(reduced_binary_targets)))
+             subtree.class = mode(binary_targets);
+             subtree.op = [];
+             subtree.kids = [];
+             subtree.score = mean(binary_targets);
+         else 
+             % recursively find subtree
+             subtree = decisionTreeLearning(reduced_examples, attributes, reduced_binary_targets);
+         end
+         
+         % set subtree
+         % need the (+1) because cell arrays are 1-indexed
+         decision_tree.kids{possible_value + 1} = subtree;
+     end
+   
 end
 
 
