@@ -34,7 +34,7 @@ function [ decision_tree ] = decisionTreeLearning(examples, attributes, binary_t
         % get elements of examples with best_attribute == possible_value and the corresponding binary_targets
         [reduced_examples, reduced_binary_targets] = getExamplesWithAttributeOfValue(examples, binary_targets, best_attribute, possible_value);
 
-        if (isempty(reduced_examples))
+        if (isempty(reduced_examples)||(length(reduced_binary_targets)==length(binary_targets)))
             subtree.class = mode(binary_targets);
             subtree.op = [];
             subtree.kids = [];
