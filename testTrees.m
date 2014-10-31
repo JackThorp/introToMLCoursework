@@ -16,7 +16,8 @@ function [ predictions ] = testTrees( T, x2 )
     predictions = zeros(length(x2), 1);
     
     for x=1:length(x2)
-        predictions(i) =  chooseEmotionRandom(classifications(i,:), scores(i,:));
+        %predictions(i) =  chooseEmotionRandom(classifications(i,:), scores(i,:));
+        predictions(i) =  chooseEmotionRandom(classifications(i,:));
     end
     
 end
@@ -55,10 +56,8 @@ function [ emotion ] = chooseEmotionUsingScores(classifications, scores)
         % Multiple trees classified example positively so
         % choose classification with best score.
         
-        %Get indicies of max values from scores 
-        our_scores = arrayfun(@(x,y) x*y, classifications, b)
-        emotion = max(pos_emotions,1);
-        
+        mx = max(arrayfun(@(x,y) x*y, classifications, scores));
+        emotion = datasample(find(scores==mx),1);
     end
         
 
