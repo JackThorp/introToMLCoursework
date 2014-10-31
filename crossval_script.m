@@ -9,6 +9,7 @@ i=1;
     decision_trees= cell(1,6);
     for emotion = 1:6 
         decision_trees{emotion} = getDecisionTree(emotion,training);
+%         DrawDecisionTree(decision_trees{emotion},emolab2str(emotion));
     end
     
     % Get predictions of our trees for validation test data.
