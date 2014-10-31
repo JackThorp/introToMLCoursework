@@ -3,7 +3,7 @@ cleandata = load('forstudents/cleandata_students.mat');
 
  decision_trees= cell(1,6);
     for emotion = 1:6 
-% %         decision_trees{emotion} = getDecisionTree(emotion,cleandata);
+        decision_trees{emotion} = getDecisionTree(emotion,cleandata);
         DrawDecisionTree(decision_trees{emotion},emolab2str(emotion));
     end
     
