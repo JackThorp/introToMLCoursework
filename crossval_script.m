@@ -1,9 +1,24 @@
-data = load('forstudents/cleandata_students.mat');
+function crossval_script(clean_or_noisy)
+% takes a string 'clean' or dirty'
+% perform the validation process and print everything
 
-% for i = 1:10
-i=1;
+if(strcmp(clean_or_noisy, 'clean'))
+    data = load('forstudents/cleandata_students.mat');
+    disp('validating clean data');
+elseif(strcmp(clean_or_noisy, 'noisy'))
+    data = load('forstudents/noisydata_students.mat');
+    disp('validating noisy data');
+else
+    disp('Please input ''clean'' or ''noisy''');
+end
 
-    [ training, validation ] = crossValidationSplit(10, data, i);
+fold = 10;
+matrices = cell(1,fold);
+
+for i = 1:fold
+% i=1;
+
+    [ training, validation ] = crossValidationSplit(fold, data, i);
     
     %trees
     decision_trees= cell(1,6);
@@ -19,4 +34,35 @@ i=1;
     % emotions.
     [C,order] = confusionmat(validation.y, predictions);
     
-% end
+    %store the matrix
+    matrices{i} = C;
+    
+    fprintf('confution matrix %d is:\n',i);
+    disp(C);
+end
+
+% combine the matrices by averaging them
+c_matrix = mean(reshape(cell2mat(matrices), [ size(matrices{1}), length(matrices) ]), ndims(matrices{1})+1) ;
+
+fprintf('The combined matrix is:\n');
+disp(c_matrix);
+
+% measures for each class
+for class=1:6
+    recall = measure_recall(c_matrix, class);
+    fprintf('Recall for class %d is: %d\n ',class, recall);
+    
+    precision = measure_precision( c_matrix, class);
+    fprintf('Precision for class %d is: %d \n ',class, precision);
+    
+    F1 = 2 *( (precision*recall)/(precision+recall) );
+    fprintf('F1 for class %d is: %d\n ',class, F1);
+end
+
+cr = measure_cr(c_matrix);
+fprintf('CR for class %d is: %d\n ',class, cr);
+
+end
+
+
+
