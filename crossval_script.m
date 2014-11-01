@@ -37,7 +37,7 @@ for i = 1:fold
     %store the matrix
     matrices{i} = C;
     
-    fprintf('confution matrix %d is:\n',i);
+    fprintf('confusion matrix %d is:\n',i);
     disp(C);
 end
 
@@ -56,11 +56,11 @@ for class=1:6
     fprintf('Precision for class %d is: %d \n ',class, precision);
     
     F1 = 2 *( (precision*recall)/(precision+recall) );
-    fprintf('F1 for class %d is: %d\n ',class, F1);
+    fprintf('F1 for class %d is: %d\n\n ',class, F1);
 end
 
 cr = measure_cr(c_matrix);
-fprintf('CR for class %d is: %d\n ',class, cr);
+fprintf('CR for %s data is: %d\n ',clean_or_noisy, cr);
 
 end
 
