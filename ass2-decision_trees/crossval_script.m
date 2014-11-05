@@ -3,10 +3,10 @@ function crossval_script(clean_or_noisy)
 % perform the validation process and print everything
 
 if(strcmp(clean_or_noisy, 'clean'))
-    data = load('forstudents/cleandata_students.mat');
+    data = load('../forstudents/cleandata_students.mat');
     disp('validating clean data');
 elseif(strcmp(clean_or_noisy, 'noisy'))
-    data = load('forstudents/noisydata_students.mat');
+    data = load('../forstudents/noisydata_students.mat');
     disp('validating noisy data');
 else
     disp('Please input ''clean'' or ''noisy''');
