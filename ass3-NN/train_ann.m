@@ -1,30 +1,37 @@
-function tr1 = train_ann( data,split,layers,trainFcn,lr,lr_inc, lr_dec, max_fail, epochs)
+function [net1, tr1] = train_ann( trainval,layers,trainFcn,max_fail, epochs)
     % prepare data (format by transposing) for neural network functions
-
-    [trainval, test] = crossValidationSplit(10, data, split);
+    
     [x2, y2] = ANNdata(trainval.x, trainval.y);
 
     % Create blank feedforward network
     net = feedforwardnet(layers);
-%     net = configure(net, x2, y2); 
-    %sets up network and initialises weights. Also configure is done automatically by train function.
+    net.trainFcn = trainFcn.name; %sets the network trainFcn property.
+    
+    if strcmp(trainFcn.name, 'traingda')
+        net.trainParam.lr_inc = trainFcn.lr_inc;
+        net.trainParam.lr_dec = trainFcn.lr_dec;
+    
+    elseif strcmp(trainFcn.name, 'traingdm')
+        net.trainParam.mc = trainFcn.mc;
 
-
-    net.trainFcn = trainFcn; %sets the network trainFcn property.
-
-    % configure and run training algorithm.
-    % Stop criteria for training includes end of epochs, max_fail, min_grad,
-    % time (timeout) or goal (minimum performance value).
-    % net.trainParam.min_grad
+    elseif strcmp(trainFcn.name, 'trainrp')
+        net.trainParam.delta0 = trainFcn.delta0;
+        net.trainParam.deltmax = trainFcn.deltmax;
+        net.trainParam.deltdec = trainFcn.deltdec;
+        net.trainParam.deltinc = trainFcn.deltinc;
+        
+    else
+        error('Invalid training function name passed to train_ann');  
+    end
+        
+    net.trainParam.lr = trainFcn.lr;
     net.trainParam.epochs = epochs;
-    net.trainParam.lr = lr;
-    net.trainParam.lr_inc = lr_inc;
-    net.trainParam.lr_dec = lr_dec;
     net.trainParam.max_fail = max_fail;
     net.divideFcn = 'divideind';
     net.divideParam.valInd = 1:100;
     net.divideParam.trainInd = 101:900;
 
+    
     % tr is the training record. pick the best perf
     pick_best =  cell(1,3);
     perfs = zeros(1,3);
@@ -32,11 +39,13 @@ function tr1 = train_ann( data,split,layers,trainFcn,lr,lr_inc, lr_dec, max_fail
 %         net = init(net);
 %         net = configure(net, x2, y2); 
         [net,tr] = train(net, x2, y2);
-        pick_best{j} = tr;
-        perfs(1,j) = pick_best{j}.best_vperf;
+        pick_best{j}.net = net;
+        pick_best{j}.tr = tr;
+        perfs(1,j) = pick_best{j}.tr.best_vperf;
     end    
     [M, I] = min(perfs); 
-    tr1 = pick_best{I};
+    tr1 = pick_best{I}.tr;
+    net1 = pick_best{I}.net;
 
 end
 
