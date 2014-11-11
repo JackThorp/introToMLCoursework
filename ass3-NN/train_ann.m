@@ -20,6 +20,8 @@ function [net1, tr1] = train_ann( trainval,layers,trainFcn,max_fail, epochs)
         net.trainParam.deltdec = trainFcn.deltdec;
         net.trainParam.deltinc = trainFcn.deltinc;
         
+    elseif strcmp(trainFcn.name, 'traingd')
+        
     else
         error('Invalid training function name passed to train_ann');  
     end
@@ -30,6 +32,8 @@ function [net1, tr1] = train_ann( trainval,layers,trainFcn,max_fail, epochs)
     net.divideFcn = 'divideind';
     net.divideParam.valInd = 1:100;
     net.divideParam.trainInd = 101:900;
+    
+     net.trainParam.showWindow = 0;
 
     
     % tr is the training record. pick the best perf
