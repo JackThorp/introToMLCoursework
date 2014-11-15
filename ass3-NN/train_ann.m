@@ -7,10 +7,17 @@ function [net1, tr1] = train_ann( trainval,layers,trainFcn,max_fail, epochs)
     net = feedforwardnet(layers);
     net.trainFcn = trainFcn.name; %sets the network trainFcn property.
     
+    net.trainParam.lr = trainFcn.lr;
+    net.trainParam.epochs = epochs;
+    net.trainParam.max_fail = max_fail;
+    net.divideFcn = 'divideind';
+    net.divideParam.valInd = 1:100;
+    net.divideParam.trainInd = 101:900;
+    
     if strcmp(trainFcn.name, 'traingda')
          net.trainParam.lr_inc = trainFcn.lr_inc;
          net.trainParam.lr_dec = trainFcn.lr_dec;
-	net.trainParam.lr = trainFcn.lr;
+% 	     net.trainParam.lr = trainFcn.lr;
     
     elseif strcmp(trainFcn.name, 'traingdm')
         net.trainParam.mc = trainFcn.mc;
@@ -27,14 +34,7 @@ function [net1, tr1] = train_ann( trainval,layers,trainFcn,max_fail, epochs)
         error('Invalid training function name passed to train_ann');  
     end
         
-    net.trainParam.lr = trainFcn.lr;
-    net.trainParam.epochs = epochs;
-    net.trainParam.max_fail = max_fail;
-    net.divideFcn = 'divideind';
-    net.divideParam.valInd = 1:100;
-    net.divideParam.trainInd = 101:900;
-    
-      net.trainParam.showWindow = 0;
+%       net.trainParam.showWindow = 0;
 
     
     % tr is the training record. pick the best perf

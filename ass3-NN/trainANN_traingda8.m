@@ -28,7 +28,7 @@ table = cell(num_of_results+1,14);
 max_fail = 6;
 epochs = 3000;
 
-for fold = 1:2
+for fold = 7:8
 
     split = fold;
     trainFcn.name = 'traingda';
@@ -130,7 +130,7 @@ end
           %  layer2(row-1,1) = layers(2);
           %  crs(row-1,1) = cr;
 
-save('traingda_table.mat', 'table');
+save('traingda_table78.mat', 'table');
 
 % fit response surface
 %sf = fit([layer1, layer2],crs,'poly23');
