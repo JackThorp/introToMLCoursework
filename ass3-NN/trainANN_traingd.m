@@ -54,3 +54,4 @@ for k = 1:l
 end
 
 save('traingd_table.mat', 'table');
+%  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

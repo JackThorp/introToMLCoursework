@@ -25,7 +25,7 @@ table = cell(num_of_results+1,10);
     table{1,13} = 'TR';
     
 max_fail = 6;
-epochs = 30000;
+epochs = 3000;
 
 split = 1;
 trainFcn.name = 'traingda';
@@ -34,20 +34,26 @@ trainFcn.name = 'traingda';
 [train,val]  = crossValidationSplit(9, trainval, 1);
 [valx2, valy2] = ANNdata(val.x, val.y);
 
-layer_map = [5,14,31,40]; % remove 23 for later
-% layer_map = [24,26,27,28,30];
-% lr_map = [1:30]*0.01; %array to store learning rate
+layer_map = [15,20,25,30,35,40,[23,15],[23,20],[23,35],[27,15],[27,20],[27,35],[32,15],[32,20],[32,25]];
+%layer_map1 = [23,27,32]; % remove 23 for later
+%layer_map2 = [15,20,35];
+lr_map = [0.05,0.01,0.015,0.02]; %array to store learning rate
+lr_inc_map = [0.9, 1.05, 1.2];
+lr_dec_map = [0.5,0.7,0.9];
 
 row = 1; % init row number
 
-% for k = 1:l
-     for i = 1:m
-        for j = 1:n
+for l_i = 1:15
+ for lr_i = 1:4
+     for lr_inc_i = 1:3
+        for lr_dec_i = 1:3
             
-            trainFcn.lr = 0.01;
+            trainFcn.lr = lr_map(lr_i);
+	    trainFcn.lr_inc = lr_inc_map(lr_inc_i);
+	    trainFcn.lr_dec = lr_dec_map(lr_dec_i);
 
-            layers = [layer_map(i),layer_map(j)];
-            [net1, tr1] = train_ann(trainval,layers,trainFcn, max_fail, epochs);
+            layers = layer_map(l_i);
+            [net1, tr1] = train_ann(trainval,layers, trainFcn, max_fail, epochs);
             
             Y = num2cell(sim(net1, valx2),1);
             predictions = cellfun(@NNout2labels, Y);
@@ -73,52 +79,53 @@ row = 1; % init row number
             table{row,12} = pcs;
             table{row,13} = tr1;
             
-            layer1(row-1,1) = layers(1);
-            layer2(row-1,1) = layers(2);
-            crs(row-1,1) = cr;
+            %layer1(row-1,1) = layers(1);
+            %layer2(row-1,1) = layers(2);
+            %crs(row-1,1) = cr;
         end
      end
-% end
+ end
+end
 
 % add centre 
-centre = 23;
-trainFcn.lr = 0.01;
+%centre = 23;
+%trainFcn.lr = 0.01;
 
-            layers = [centre,centre];
-            [net1, tr1] = train_ann(trainval,layers,trainFcn, max_fail, epochs);
+ %           layers = [centre,centre];
+  %          [net1, tr1] = train_ann(trainval,layers,trainFcn, max_fail, epochs);
             
-            Y = num2cell(sim(net1, valx2),1);
-            predictions = cellfun(@NNout2labels, Y);
-            [C,order] = confusionmat(val.y, predictions);
+   %         Y = num2cell(sim(net1, valx2),1);
+    %        predictions = cellfun(@NNout2labels, Y);
+     %       [C,order] = confusionmat(val.y, predictions);
             
-            cr = measure_cr(C);
-            [f1s, rcs, pcs]  = getPerfMeasures(C, length(order));
+      %      cr = measure_cr(C);
+       %     [f1s, rcs, pcs]  = getPerfMeasures(C, length(order));
             
-%             row = (k-1)*(m+n) + (i-1)*n + j + 1;
-            row = row+1;
+%       %      row = (k-1)*(m+n) + (i-1)*n + j + 1;
+         %   row = row+1;
 
-            table{row, 1} = layers;
-            table{row, 2} = net1.trainParam.lr;
+          %  table{row, 1} = layers;
+          %  table{row, 2} = net1.trainParam.lr;
 %             table{row, 3} = lr_inc;
 %             table{row, 4} = lr_dec;
-            table{row, 5} =  max_fail;
-            table{row, 6} = epochs ;
-            table{row, 7} = tr1.stop;
-            table{row, 8} = tr1.best_vperf;
-            table{row,9} = cr;
-            table{row,10} = f1s;
-            table{row,11} = rcs;
-            table{row,12} = pcs;
-            table{row,13} = tr1;
+          %  table{row, 5} =  max_fail;
+          %  table{row, 6} = epochs ;
+          %  table{row, 7} = tr1.stop;
+          %  table{row, 8} = tr1.best_vperf;
+          %  table{row,9} = cr;
+          %  table{row,10} = f1s;
+          %  table{row,11} = rcs;
+          %  table{row,12} = pcs;
+          %  table{row,13} = tr1;
             
-            layer1(row-1,1) = layers(1);
-            layer2(row-1,1) = layers(2);
-            crs(row-1,1) = cr;
+          %  layer1(row-1,1) = layers(1);
+          %  layer2(row-1,1) = layers(2);
+          %  crs(row-1,1) = cr;
 
 save('traingda_table.mat', 'table');
 
 % fit response surface
-sf = fit([layer1, layer2],crs,'poly23');
-xlabel('time (sec)')
-ylabel('output')
-plot(sf,[layer1,layer2],crs);
+%sf = fit([layer1, layer2],crs,'poly23');
+%xlabel('time (sec)')
+%ylabel('output')
+%plot(sf,[layer1,layer2],crs);
