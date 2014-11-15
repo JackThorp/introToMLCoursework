@@ -33,8 +33,8 @@ function [net1, tr1] = train_ann( trainval,layers,trainFcn,max_fail, epochs)
     else
         error('Invalid training function name passed to train_ann');  
     end
-        
-%       net.trainParam.showWindow = 0;
+    
+    net.trainParam.showWindow = 0;
 
     
     % tr is the training record. pick the best perf

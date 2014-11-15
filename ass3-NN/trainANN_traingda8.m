@@ -1,12 +1,8 @@
 
 data = load('/forstudents/cleandata_students.mat');
 
-l = 1;
-m = 4;
-n = 4;
-
-num_of_results = l*m*n ;
-table = cell(num_of_results+1,14);
+% num_of_results = l*m*n ;
+table = cell(10,14);
 
     %npick = [0,2,3,4,5,6,7,8,9,10];
     
@@ -28,6 +24,9 @@ table = cell(num_of_results+1,14);
 max_fail = 6;
 epochs = 3000;
 
+row = 1; % init row number
+
+
 for fold = 7:8
 
     split = fold;
@@ -37,26 +36,23 @@ for fold = 7:8
     [train,val]  = crossValidationSplit(9, trainval, 1);
     [valx2, valy2] = ANNdata(val.x, val.y);
 
-    layer_map = [15,20,25,30,35,40,[23,15],[23,20],[23,35],[27,15],[27,20],[27,35],[32,15],[32,20],[32,25]];
+    layer_map = {15,20,25,30,35,40,[23,15],[23,20],[23,35],[27,15],[27,20],[27,35],[32,15],[32,20],[32,25]};
     %layer_map1 = [23,27,32]; % remove 23 for later
     %layer_map2 = [15,20,35];
     lr_map = [0.05,0.01,0.015,0.02]; %array to store learning rate
     lr_inc_map = [1.05, 1.1, 1.15];
-    lr_dec_map = [0.5, 0.7, 0.9];
-
-    row = 1; % init row number
-
+    lr_dec_map = [0.5, 0.7, 0.9];    
 
     for l_i = 1:15
      for lr_i = 1:4
          for lr_inc_i = 1:3
             for lr_dec_i = 1:3
-
+                
+                layers = layer_map{l_i};
+                
                 trainFcn.lr = lr_map(lr_i);
                 trainFcn.lr_inc = lr_inc_map(lr_inc_i);
                 trainFcn.lr_dec = lr_dec_map(lr_dec_i);
-
-                layers = layer_map(l_i);
 
                 [net1, tr1] = train_ann(trainval,layers, trainFcn, max_fail, epochs);
 
@@ -67,7 +63,6 @@ for fold = 7:8
                 cr = measure_cr(C);
                 [f1s, rcs, pcs]  = getPerfMeasures(C, length(order));
 
-    %             row = (k-1)*(m+n) + (i-1)*n + j + 1;
                 row = row+1;
 
                 table{row, 1} = fold;
@@ -88,6 +83,8 @@ for fold = 7:8
                 %layer1(row-1,1) = layers(1);
                 %layer2(row-1,1) = layers(2);
                 %crs(row-1,1) = cr;
+                fprintf('fold %d, layers %d \n', fold, layers); 
+                
             end
          end
      end
