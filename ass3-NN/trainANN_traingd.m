@@ -5,10 +5,18 @@ l = 30;
 m = 30;
 n = 30;
 
-table = createTable(l*m*n);
+table = cell(l*m*n,7);
+
+table{1,1} = 'layers';
+table{1,2} = 'LR';
+table{1,3} = 'mc';
+table{1,4} = 'fail';
+table{1,5} = 'Performance';
+table{1,6} = 'CR';
+
+trainFcn.name = 'traingd';
 
 split = 1;
-trainFcn.name = 'traingd';
 max_fail = 6;
 epochs = 1000;
 

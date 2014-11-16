@@ -7,9 +7,6 @@ n = 4;
 
 num_of_results = l*m*n ;
 table = cell(num_of_results+1,10);
-
-    %npick = [0,2,3,4,5,6,7,8,9,10];
-
     table{1,1} = 'layers';
     table{1,2} = 'LR';
     table{1,3} = 'LR_inc';

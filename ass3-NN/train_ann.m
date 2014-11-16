@@ -8,8 +8,8 @@ function [net1, tr1] = train_ann( trainval,layers,trainFcn,max_fail, epochs)
     net.trainFcn = trainFcn.name; %sets the network trainFcn property.
     
     if strcmp(trainFcn.name, 'traingda')
-%         net.trainParam.lr_inc = trainFcn.lr_inc;
-%         net.trainParam.lr_dec = trainFcn.lr_dec;
+        % net.trainParam.lr_inc = trainFcn.lr_inc;
+        % net.trainParam.lr_dec = trainFcn.lr_dec;
     
     elseif strcmp(trainFcn.name, 'traingdm')
         net.trainParam.mc = trainFcn.mc;
@@ -33,15 +33,13 @@ function [net1, tr1] = train_ann( trainval,layers,trainFcn,max_fail, epochs)
     net.divideParam.valInd = 1:100;
     net.divideParam.trainInd = 101:900;
     
-%      net.trainParam.showWindow = 0;
+    %net.trainParam.showWindow = 0;
 
     
     % tr is the training record. pick the best perf
     pick_best =  cell(1,3);
     perfs = zeros(1,3);
     for j = 1:3
-%         net = init(net);
-%         net = configure(net, x2, y2); 
         [net,tr] = train(net, x2, y2);
         pick_best{j}.net = net;
         pick_best{j}.tr = tr;
