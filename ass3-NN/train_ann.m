@@ -16,9 +16,9 @@ function [net1, tr1] = train_ann( trainval,layers,trainFcn,max_fail, epochs)
 
     elseif strcmp(trainFcn.name, 'trainrp')
         net.trainParam.delta0 = trainFcn.delta0;
-        net.trainParam.deltmax = trainFcn.deltmax;
-        net.trainParam.deltdec = trainFcn.deltdec;
-        net.trainParam.deltinc = trainFcn.deltinc;
+        net.trainParam.deltamax = trainFcn.deltamax;
+        net.trainParam.delt_dec = trainFcn.delt_dec;
+        net.trainParam.delt_inc = trainFcn.delt_inc;
         
     elseif strcmp(trainFcn.name, 'traingd')
         
