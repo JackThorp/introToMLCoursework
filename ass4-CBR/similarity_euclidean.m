@@ -1,4 +1,4 @@
-function [ score ] = similarity( case1, case2 )
+function [ score ] = similarity_euclidean( case1, case2 )
 % similarity calculates how similar two cases are. This funciton is used
 % in the process of finding the most similar existing case in our CBR system
 % so that we may classify a new case.
@@ -16,7 +16,12 @@ function [ score ] = similarity( case1, case2 )
 %  Students are advised to consult the papers uploaded on the Machine
 %  Learning Website. You should implement at least 3 different similarity
 %  measures. 
-
-
+    
+    a = case1.des;  
+    b = case2.des;
+    
+    % euclidean distance
+    score = sqrt(numel(setdiff(union(a,b),intersect(a,b))));
+    return;
 end
 
