@@ -5,7 +5,7 @@ function [ bestlist ] = k_nn( k, caselist, newcase, simfunc)
 % simfunc can be 'cosine','dice','euclidean','jaccard'
 
 % check if caselist smaller than k, if smaller, return caselist
-if(k>numel(caselist))
+if(k > numel(caselist))
     bestlist = caselist;
     return;
 end
@@ -33,10 +33,10 @@ end
 bestlist= zeros(1,k);
 for j = 1:k
     [val, ind] = max(simmap);
+    bestlist(i)= caselist(ind);
     %remove this elem from both simmap and caselist    
     simmap(ind) = [];
     caselist(ind) = [];
-    bestlist(i)= caselist(ind);
 end
 
 return;
