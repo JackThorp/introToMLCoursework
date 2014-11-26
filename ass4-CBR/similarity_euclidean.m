@@ -6,8 +6,8 @@ function [ score ] = similarity_euclidean( case1, case2 )
     a = case1.des;  
     b = case2.des;
     
-    % sim base on euclidean distance
-    score = 1- sqrt(numel(setdiff(union(a,b),intersect(a,b))));
+    % sim base on euclidean distance, we
+    score = 1 -sqrt(numel(setdiff(union(a,b),intersect(a,b))));
     return;
 end
 
