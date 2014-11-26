@@ -8,7 +8,7 @@ function [ score ] = similarity_cosine( case1, case2 )
     b = case2.des;
     
     % Cosine coefficient, it is a normalized coefficient
-    score = (numel(intersect(a,b)))/(sqrt(a)*sqrt(b));
+    score = (numel(intersect(a,b)))/(sqrt(numel(a))*sqrt(numel(b)));
     return;
 
 end

@@ -30,10 +30,10 @@ for i = 1:numel(caselist)
 end
 
 % choose the k best case from caselist base on simmap and put in best list
-bestlist= zeros(1,k);
+
 for j = 1:k
     [val, ind] = max(simmap);
-    bestlist(i)= caselist(ind);
+    bestlist(j)= caselist(ind);
     %remove this elem from both simmap and caselist    
     simmap(ind) = [];
     caselist(ind) = [];
