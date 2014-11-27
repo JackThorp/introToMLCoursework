@@ -1,4 +1,4 @@
-function [ closest_case ] = retrieve( cbr, new_case )
+function [ closest_case ] = retrieve( CB, new_case )
 % retrieve uses the cbr and the similarity function to extract the nearest
 % matching case. Uses . . . retrieval function. 
 
@@ -17,6 +17,29 @@ function [ closest_case ] = retrieve( cbr, new_case )
 % look throught the indexes and decide which cluster
 % 1. Create the following empty lists: clusters, cases-list, best-cases, and 
 % solutions. Go to 2. 
+  
+  index_scores = zeros(1,length(CB));
+  
+  % Get the index score on each cluster for new_case. Score is the sum of
+  % the proportions of new_cases AU's that the cluster contains.
+  for i=1:length(CB.clusters)
+      for j=1:length(new_case)
+          AU = new_case(j);
+          AU_score = CB.clusters(i).index(AU) / CB.g_index(AU); 
+          index_scores(i) = index_scores(i) + AU_score;
+      end
+  end
+
+  % Get cases from top three scoring clusters.
+  [~, sortIndex] = sort(index_scores(:),'descend');
+  
+  best_cases = {};
+  for i=1:3 % 3 chosen because it halves search - could do 2?
+      best_cases = [best_cases; CB.clusters(sortIndex(i)).cases]
+  end
+  
+  % k_nn with best cases and k = 20 ??
+  % How do we handle returning best_case? ? 
 
 % 2. Match the AUs of AUs-list with the AUs of index vectors of the 
 % emotion chunks constituting the case base. Each time a match is 
