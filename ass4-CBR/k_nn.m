@@ -13,7 +13,7 @@ end
 % compute the similarity
 simmap = zeros(1,numel(caselist));
 for i = 1:numel(caselist)
-    case_i = caselist(i);
+    case_i = caselist{i};
     switch simfunc
         case 'cosine'
             simmap(i)= similarity_cosine(case_i, newcase);       
@@ -30,13 +30,10 @@ for i = 1:numel(caselist)
 end
 
 % choose the k best case from caselist base on simmap and put in best list
-
+bestlist = cell(1,k);
+[~,I] = sort(simmap,'descend');
 for j = 1:k
-    [val, ind] = max(simmap);
-    bestlist(j)= caselist(ind);
-    %remove this elem from both simmap and caselist    
-    simmap(ind) = [];
-    caselist(ind) = [];
+    bestlist{j}= caselist{I(j)};
 end
 
 return;

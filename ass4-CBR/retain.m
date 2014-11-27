@@ -1,13 +1,13 @@
-function [ output_args ] = retain( CBS, solved_case )
+function [ cbr ] = retain( cbr, solved_case )
 % Indexes the solved_case into the cbr system. 
        
     sol = solved_case.sol;
-    cluster = CBS.clusters(sol);
+    cluster = cbr.clusters(sol);
     found = 0;
     for i = 1:numel(cluster.cases)
         case_i = cluster.cases{i};
         if(isequal(case_i.des, solved_case.des))
-          CBS.clusters(sol).cases{i}.out = case_i.out+1;
+          cbr.clusters(sol).cases{i}.out = case_i.out+1;
           found = 1;
           break;
         end
@@ -15,15 +15,16 @@ function [ output_args ] = retain( CBS, solved_case )
     
     if (found == 0)
         solved_case.out = 1;
-        CBS.clusters(sol).cases{end+1} = solved_case;
+        cbr.clusters(sol).cases{end+1} = solved_case;
     end
     
     % Update global and cluster index.
     for j=1:length(solved_case.des)
         AU = solved_case.des(j);
-        CBS.g_index(AU) = CBS.index(AU) + 1;
-        CBS.clusters(sol).index(AU) = CBS.clusters(sol).index(AU) + 1;
+        cbr.g_index(AU) = cbr.g_index(AU) + 1;
+        cbr.clusters(sol).index(AU) = cbr.clusters(sol).index(AU) + 1;
     end
     
+    return; %return the cbr system given
 end
 

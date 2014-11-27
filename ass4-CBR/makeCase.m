@@ -1,4 +1,4 @@
-function [ new_case ] = makeCase( x2, y , out)
+function [ new_case ] = makeCase( x2, y, out)
 % makeCase initialises a new case variable and adds x2 ( the AU vector) to
 % it along with setting other default values
 
