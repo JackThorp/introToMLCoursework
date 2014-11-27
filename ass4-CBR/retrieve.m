@@ -20,11 +20,14 @@ function [ closest_cases ] = retrieve( CB, newcase )
   % 3 chosen because it halves search - could do 2?
   caselist = horzcat(CB.clusters(sortIndex(1)).cases, ...
             CB.clusters(sortIndex(2)).cases, ...
-            CB.clusters(sortIndex(3)).cases );
+            CB.clusters(sortIndex(3)).cases,...
+            CB.clusters(sortIndex(4)).cases);%,...
+%             CB.clusters(sortIndex(5)).cases,...
+%             CB.clusters(sortIndex(6)).cases);
  
   % k_nn with best cases and k = 20 ??
   k = 20;
-  simfunc = 'jaccard';
+  simfunc = 'cosine';
   closest_cases = k_nn(k, caselist, newcase, simfunc);
   
 end
