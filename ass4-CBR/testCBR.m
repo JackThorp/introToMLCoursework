@@ -9,7 +9,7 @@ for i = 1:length(x2)
     new_case = makeCase(des, [], 0);
     closest_cases = retrieve( CBR, new_case );
     solved_case  = reuse( closest_cases, new_case );
-    CBR = retain( CBR, solved_case );
+%     CBR = retain( CBR, solved_case );
     predictions(i) = solved_case.sol;
 end
 
