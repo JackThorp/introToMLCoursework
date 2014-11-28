@@ -5,9 +5,9 @@ function [ closest_cases ] = retrieve( CB, newcase )
   %find the clusters that match and add to caselist
   caselist = {};
   for i = 1:length(CB.clusters)
-      if(~isempty(intersect(CB.clusters(i).index, newcase.des)))
+       if(~isempty(intersect(CB.clusters(i).index, newcase.des)))
           caselist = horzcat(CB.clusters(i).cases, caselist);
-      end
+       end
   end
              
   % Re-establish : 
@@ -21,9 +21,10 @@ function [ closest_cases ] = retrieve( CB, newcase )
   end
   
   % we skip the typicallity and longest intersect and use the knn to get 
-  % solution to with the bestlist  
+  % solution to with the bestlist. 
+  % Because in k-nn we will taken typicallity and intersection in to account
   % k_nn with best cases and k = 20 ??
-  k = 10;
+  k = 15;
   simfunc = 'cosine';
   closest_cases = k_nn(k, bestlist, newcase, simfunc);
   

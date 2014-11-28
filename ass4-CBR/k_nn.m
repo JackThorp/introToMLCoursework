@@ -32,8 +32,16 @@ end
 % choose the k best case from caselist base on simmap and put in best list
 bestlist = cell(1,k);
 [~,I] = sort(simmap,'descend');
-for j = 1:k
-    bestlist{j}= caselist{I(j)};
+j = 1;
+while j <= k
+    nb_case = caselist{I(j)};
+    for t = 1:nb_case.out
+        bestlist{j}= nb_case;
+        j = j + 1;
+        if j > k
+            break
+        end
+    end   
 end
 
 return;
