@@ -2,33 +2,30 @@ function [ closest_cases ] = retrieve( CB, newcase )
 % retrieve uses the cbr and the similarity function to extract the nearest
 % matching case. Uses . . . retrieval function. 
 
-  index_scores = zeros(1,length(CB.clusters));
-  
-  % Get the index score on each cluster for newcase. Score is the sum of
-  % the proportions of newcases AU's that the cluster contains.
-  for i=1:length(CB.clusters)
-      for j=1:length(newcase.des)
-          AU = newcase.des(j);
-          AU_score = (CB.clusters(i).index(AU)) / (CB.g_index(AU)); 
-          index_scores(i) = index_scores(i) + AU_score;
+  %find the clusters that match and add to caselist
+  caselist = {};
+  for i = 1:length(CB.clusters)
+      if(~isempty(intersect(CB.clusters(i).index, newcase.des)))
+          caselist = horzcat(CB.clusters(i).cases, caselist);
       end
   end
-
-  % Get cases from top three scoring clusters.
-  [~, sortIndex] = sort(index_scores,'descend');
+             
+  % Re-establish : 
+%   find the cases that contains AU from the caselist and add to bestlist
+  bestlist = {};
+  for j = 1:length(caselist)
+      matchcase = caselist{j};
+      if(~isempty(intersect(newcase.des, matchcase.des)))
+        bestlist{end+1} = matchcase;
+      end
+  end
   
-  % 3 chosen because it halves search - could do 2?
-  caselist = horzcat(CB.clusters(sortIndex(1)).cases, ...
-            CB.clusters(sortIndex(2)).cases, ...
-            CB.clusters(sortIndex(3)).cases,...
-            CB.clusters(sortIndex(4)).cases);%,...
-%             CB.clusters(sortIndex(5)).cases,...
-%             CB.clusters(sortIndex(6)).cases);
- 
+  % we skip the typicallity and longest intersect and use the knn to get 
+  % solution to with the bestlist  
   % k_nn with best cases and k = 20 ??
-  k = 20;
+  k = 10;
   simfunc = 'cosine';
-  closest_cases = k_nn(k, caselist, newcase, simfunc);
+  closest_cases = k_nn(k, bestlist, newcase, simfunc);
   
 end
 
