@@ -5,13 +5,21 @@ function [ closest_cases ] = retrieve( CB, newcase )
   %find the clusters that match and add to caselist
   caselist = {};
   for i = 1:length(CB.clusters)
-       if(~isempty(intersect(CB.clusters(i).index, newcase.des)))
-          caselist = horzcat(CB.clusters(i).cases, caselist);
-       end
+    if(indexed(CB.clusters(i).index, newcase.des))
+        caselist = horzcat(CB.clusters(i).cases, caselist);
+    end
   end
-             
+  
+  % If case list is empty - exhaustive search. I.e. append cases from each
+  % cluster.
+  if(isempty(caselist))
+    for i=length(CB.clusters)
+        caselist = [caselist, CB.clusters(i).cases];  
+    end
+  end
+  
   % Re-establish : 
-%   find the cases that contains AU from the caselist and add to bestlist
+  % find the cases that contains AU from the caselist and add to bestlist
   bestlist = {};
   for j = 1:length(caselist)
       matchcase = caselist{j};

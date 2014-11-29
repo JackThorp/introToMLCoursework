@@ -1,5 +1,6 @@
 % script to perform 10 fold cross validation and compute the results
 
+tic;
 data = load('forstudents/cleandata_students.mat');
 
 fold = 10;
@@ -46,3 +47,4 @@ end
 
 cr = measure_cr(c_matrix);
 measures(1).cr = cr;
+time_spent = toc
