@@ -39,9 +39,7 @@ end
 errors = zeros(fold, 6);
 for i = 1:fold
     for j = 1:6
-        r = measure_recall(matrices{i}, j);
-        p = measure_precision(matrices{i}, j);
-        errors(i, j) = 1 - (2 * ((p * r) / (p + r)));
+        errors(i, j) = 1 - measure_cr_class(matrices{i}, j);
     end
 end
 
