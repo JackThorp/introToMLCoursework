@@ -18,14 +18,10 @@ function [ cbr ] = retain( cbr, solved_case )
         cbr.clusters(sol).cases{end+1} = solved_case;
     end
     
-    % Update global and cluster index.
-%     for j=1:length(solved_case.des)
-%         AU = solved_case.des(j);
-%         cbr.g_index(AU) = cbr.g_index(AU) + 1;
-%         cbr.clusters(sol).index(AU) = cbr.clusters(sol).index(AU) + 1;
-%     end
-    cbr.clusters(sol).index = union(cbr.clusters(sol).index, solved_case.des);
-    
+    if(~indexed(cbr.clusters(sol).index, solved_case.des)) 
+        cbr.clusters(sol).index{end+1} = solved_case.des;
+    end
+     
     return; %return the cbr system given
 end
 

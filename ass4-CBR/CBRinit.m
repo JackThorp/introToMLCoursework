@@ -13,11 +13,9 @@ function [ CBS ] = CBRinit(x, y)
 
     % Create a struct array for CBR clusters
     CB = struct('label', {'anger', 'disgust', 'fear', 'happiness', 'sadness', 'suprise'});  
-%     g_index = zeros(1,45);
     
     for i=1:length(CB)
         CB(i).cases = {};
-%         CB(i).index = zeros(1,45);
     end
     
     % group the elements in x and y together and add count
@@ -31,17 +29,13 @@ function [ CBS ] = CBRinit(x, y)
         x_u = counted(i, 1:45);
         y_u = counted(i, 46);
         out_u = counted(i, 47);
+        
         % Reformat example into new AU vector format
         x2 = find(x_u);
         
         % Add example to cases of appropriate cluster
         CB(y_u).cases{end+1} = makeCase(x2,y_u,out_u);
         
-%         % Increase index count and global count for each AU in example
-%         for j=1:length(x2)
-%            CB(y(i)).index(x2(j)) = CB(y(i)).index(x2(j))  + 1;
-%            g_index(x2(j)) = g_index(x2(j)) + 1;
-%         end
     end
    
     % update index
@@ -50,6 +44,5 @@ function [ CBS ] = CBRinit(x, y)
     end
     
     CBS.clusters = CB;
-%     CBS.g_index = g_index;
 end
 
