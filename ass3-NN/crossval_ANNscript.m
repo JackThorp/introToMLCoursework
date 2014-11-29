@@ -1,4 +1,4 @@
-function crossval_ANNscript(clean_or_noisy, trainFcn, layers)
+function errors = crossval_ANNscript(clean_or_noisy, trainFcn, layers)
 % takes a string 'clean' or dirty'
 % perform the validation process and print everything
 
@@ -33,6 +33,16 @@ for i = 1:fold
     
     fprintf('confusion matrix %d is:\n',i);
     disp(C);
+end
+
+% get errors (F1)
+errors = zeros(fold, 6);
+for i = 1:fold
+    for j = 1:6
+        r = measure_recall(matrices{i}, j);
+        p = measure_precision(matrices{i}, j);
+        errors(i, j) = 1 - (2 * ((p * r) / (p + r)));
+    end
 end
 
 % combine the matrices by averaging them
