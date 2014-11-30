@@ -32,8 +32,8 @@ function [ closest_cases ] = retrieve( CB, newcase )
   % solution to with the bestlist. 
   % Because in k-nn we will taken typicallity and intersection in to account
   % k_nn with best cases and k = 20 ??
-  k = 20;
-  simfunc = 'cosine';
+  k = 31;
+  simfunc = 'jaccard';
   closest_cases = k_nn(k, bestlist, newcase, simfunc);
   
 end

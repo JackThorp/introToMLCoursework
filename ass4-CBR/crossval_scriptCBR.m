@@ -1,6 +1,6 @@
 % script to perform 10 fold cross validation and compute the results
-function errors = crossval_scriptCBR(clean_or_noisy)
-
+% function errors = crossval_scriptCBR(clean_or_noisy)
+clean_or_noisy = 'noisy';
 tic;
 if(strcmp(clean_or_noisy, 'clean'))
     data = load('../forstudents/cleandata_students.mat');
@@ -64,4 +64,4 @@ end
 cr = measure_cr(c_matrix);
 measures(1).cr = cr;
 time_spent = toc;
-end
+% end
