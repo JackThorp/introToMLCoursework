@@ -16,7 +16,10 @@ function [ cbr ] = retain( cbr, solved_case )
         cbr.cases{end+1} = solved_case;
     end
     
-    
+    if(~indexed(cbr.clusters(sol).index, solved_case.des)) 
+        cbr.clusters(sol).index{end+1} = solved_case.des;
+    end
+
     return; %return the cbr system given
 end
 

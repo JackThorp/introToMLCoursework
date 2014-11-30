@@ -12,11 +12,11 @@ function [ CBS ] = CBRinit(x, y)
 % example, found in y, should be added to the returned case.
 
     % Create a struct array for CBR clusters
-    CBS = struct();  
-%     g_index = zeros(1,45);
+    CB = struct('label', {'anger', 'disgust', 'fear', 'happiness', 'sadness', 'suprise'});  
     
-
-    CBS.cases = {};
+    for i=1:length(CB)
+        CB(i).cases = {};
+    end
 
     % group the elements in x and y together and add count
     attached = [x,y];
@@ -29,6 +29,7 @@ function [ CBS ] = CBRinit(x, y)
         x_u = counted(i, 1:45);
         y_u = counted(i, 46);
         out_u = counted(i, 47);
+        
         % Reformat example into new AU vector format
         x2 = find(x_u);
         
@@ -36,5 +37,12 @@ function [ CBS ] = CBRinit(x, y)
         CBS.cases{end+1} = makeCase(x2,y_u,out_u);
         
     end
+   
+    % update index
+    for j = 1:6
+        CB(j).index = get_index(CB(j).cases);
+    end
+    
+    CBS.clusters = CB;
 end
 
