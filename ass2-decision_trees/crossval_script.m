@@ -1,4 +1,4 @@
-function crossval_script(clean_or_noisy)
+function errors = crossval_script(clean_or_noisy)
 % takes a string 'clean' or dirty'
 % perform the validation process and print everything
 
@@ -39,6 +39,14 @@ for i = 1:fold
     
     fprintf('confusion matrix %d is:\n',i);
     disp(C);
+end
+
+% get errors (F1)
+errors = zeros(fold, 6);
+for i = 1:fold
+    for j = 1:6
+        errors(i, j) = 1 - measure_cr_class(matrices{i}, j);;
+    end
 end
 
 % combine the matrices by averaging them
