@@ -1,7 +1,16 @@
 % script to perform 10 fold cross validation and compute the results
+function errors = crossval_scriptCBR(clean_or_noisy)
 
 tic;
-data = load('forstudents/cleandata_students.mat');
+if(strcmp(clean_or_noisy, 'clean'))
+    data = load('../forstudents/cleandata_students.mat');
+    disp('validating clean data');
+elseif(strcmp(clean_or_noisy, 'noisy'))
+    data = load('../forstudents/noisydata_students.mat');
+    disp('validating noisy data');
+else
+    disp('Please input ''clean'' or ''noisy''');
+end
 
 fold = 10;
 matrices = cell(1,fold);
@@ -23,6 +32,13 @@ for i = 1:fold
     disp(C);   
 end
 
+% get errors (F1)
+errors = zeros(fold, 6);
+for i = 1:fold
+    for j = 1:6
+        errors(i, j) = 1 - measure_cr_class(matrices{i}, j);
+    end
+end
 
 % combine the matrices by averaging them
 c_matrix = sum(reshape(cell2mat(matrices), [ size(matrices{1}), length(matrices) ]), ndims(matrices{1})+1) ;
@@ -48,3 +64,4 @@ end
 cr = measure_cr(c_matrix);
 measures(1).cr = cr;
 time_spent = toc;
+end

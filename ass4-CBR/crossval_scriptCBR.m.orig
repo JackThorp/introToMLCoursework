@@ -1,7 +1,10 @@
-function errors = crossval_script(clean_or_noisy)
-% takes a string 'clean' or dirty'
-% perform the validation process and print everything
+% script to perform 10 fold cross validation and compute the results
+function errors = crossval_scriptCBR(clean_or_noisy)
 
+tic;
+<<<<<<< HEAD
+data = load('forstudents/cleandata_students.mat');
+=======
 if(strcmp(clean_or_noisy, 'clean'))
     data = load('../forstudents/cleandata_students.mat');
     disp('validating clean data');
@@ -11,24 +14,16 @@ elseif(strcmp(clean_or_noisy, 'noisy'))
 else
     disp('Please input ''clean'' or ''noisy''');
 end
+>>>>>>> 7628fe5654a7b49a59a0048cc3db4c29798a2285
 
 fold = 10;
 matrices = cell(1,fold);
 
 for i = 1:fold
-% i=1;
 
     [ training, validation ] = crossValidationSplit(fold, data, i);
-    
-    %trees
-    decision_trees= cell(1,6);
-    for emotion = 1:6 
-        decision_trees{emotion} = getDecisionTree(emotion,training);
-%         DrawDecisionTree(decision_trees{emotion},emolab2str(emotion));
-    end
-    
-    % Get predictions of our trees for validation test data.
-    predictions = testTrees(decision_trees, validation.x);
+    cbr = CBRinit(training.x, training.y);
+    predictions = testCBR( cbr, validation.x );
     
     % Get confusion matrix from predictions and actual validation target
     % emotions.
@@ -38,39 +33,43 @@ for i = 1:fold
     matrices{i} = C;
     
     fprintf('confusion matrix %d is:\n',i);
-    disp(C);
+    disp(C);   
 end
 
 % get errors (F1)
 errors = zeros(fold, 6);
 for i = 1:fold
     for j = 1:6
-        errors(i, j) = 1 - measure_cr_class(matrices{i}, j);;
+        errors(i, j) = 1 - measure_cr_class(matrices{i}, j);
     end
 end
 
 % combine the matrices by averaging them
-c_matrix = mean(reshape(cell2mat(matrices), [ size(matrices{1}), length(matrices) ]), ndims(matrices{1})+1) ;
+c_matrix = sum(reshape(cell2mat(matrices), [ size(matrices{1}), length(matrices) ]), ndims(matrices{1})+1) ;
 
 fprintf('The combined matrix is:\n');
 disp(c_matrix);
 
+measures = struct('class', {emolab2str(1),emolab2str(2),emolab2str(3),...
+    emolab2str(4),emolab2str(5),emolab2str(6)});
+
 % measures for each class
 for class=1:6
     recall = measure_recall(c_matrix, class);
-    fprintf('Recall for class %d is: %d\n ',class, recall);
+    measures(class).recall = recall;
     
     precision = measure_precision( c_matrix, class);
-    fprintf('Precision for class %d is: %d \n ',class, precision);
+    measures(class).precision = precision;
     
     F1 = 2 *( (precision*recall)/(precision+recall) );
-    fprintf('F1 for class %d is: %d\n\n ',class, F1);
+    measures(class).f1 = F1;
 end
 
 cr = measure_cr(c_matrix);
-fprintf('CR for %s data is: %d\n ',clean_or_noisy, cr);
+measures(1).cr = cr;
+<<<<<<< HEAD
+time_spent = toc;
+=======
 
 end
-
-
-
+>>>>>>> 7628fe5654a7b49a59a0048cc3db4c29798a2285
