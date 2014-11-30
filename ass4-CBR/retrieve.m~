@@ -6,7 +6,7 @@ function [ closest_cases ] = retrieve( CB, newcase )
   caselist = {};
   for i = 1:length(CB.cases)
        if(~isempty(intersect(CB.cases{i}.des, newcase.des)))
-          caselist = horzcat(CB.cases(i), caselist);
+          caselist = horzcat(CB.cases{i}, caselist);
        end
   end
              

@@ -35,7 +35,7 @@ bestlist = cell(1,k);
 j = 1;
 while j <= k
     nb_case = caselist{I(j)};
-    for t = 1:nb_case.out
+    for t = 1:nb_case.typ
         bestlist{j}= nb_case;
         j = j + 1;
         if j > k
