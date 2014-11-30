@@ -47,4 +47,4 @@ end
 
 cr = measure_cr(c_matrix);
 measures(1).cr = cr;
-time_spent = toc
+time_spent = toc;

@@ -3,7 +3,7 @@ function [ indexed ] = indexed( index, AU_vector )
         
     indexed = false;
     for x=1:length(index)
-        if(isequal(intersect(index{x}, AU_vector), index{x}))
+        if( numel(intersect(index{x}, AU_vector))> (numel(index{x})/2) )
             indexed = true;
             return;
         end
