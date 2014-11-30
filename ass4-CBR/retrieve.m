@@ -4,7 +4,6 @@ function [ closest_cases ] = retrieve( CB, newcase )
 
   %find the clusters that match and add to caselist
   caselist = {};
-
   for i = 1:length(CB.clusters)
     if(indexed(CB.clusters(i).index, newcase.des))
         caselist = horzcat(CB.clusters(i).cases, caselist);
@@ -35,7 +34,7 @@ function [ closest_cases ] = retrieve( CB, newcase )
   % k_nn with best cases and k = 20 ??
   k = 20;
   simfunc = 'cosine';
-  closest_cases = k_nn(k, caselist, newcase, simfunc);
+  closest_cases = k_nn(k, bestlist, newcase, simfunc);
   
 end
 

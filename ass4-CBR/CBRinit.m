@@ -17,7 +17,7 @@ function [ CBS ] = CBRinit(x, y)
     for i=1:length(CB)
         CB(i).cases = {};
     end
-
+    
     % group the elements in x and y together and add count
     attached = [x,y];
     [u, ~, ic]=unique(attached, 'rows');
@@ -28,13 +28,13 @@ function [ CBS ] = CBRinit(x, y)
         
         x_u = counted(i, 1:45);
         y_u = counted(i, 46);
-        out_u = counted(i, 47);
+        typ_u = counted(i, 47);
         
         % Reformat example into new AU vector format
         x2 = find(x_u);
         
         % Add example to cases of appropriate cluster
-        CBS.cases{end+1} = makeCase(x2,y_u,out_u);
+        CB(y_u).cases{end+1} = makeCase(x2,y_u,typ_u);
         
     end
    

@@ -42,3 +42,4 @@ function [ index ] = get_index( caselist )
 
     return;
 end
+
